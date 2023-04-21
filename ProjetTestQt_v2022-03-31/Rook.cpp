@@ -1,10 +1,10 @@
 #include "Rook.hpp"
 #include "ChessBoard.hpp"
 
-Rook::Rook(Color color, QWidget* parent) : Piece(color, parent) {
+chess_model::Rook::Rook(Color color, QWidget* parent) : Piece(color, parent) {
 }
 
-bool Rook::isValidMove(const QPoint& initial, const QPoint & final) const {
+bool chess_model::Rook::isValidMove(const QPoint& initial, const QPoint & final) const {
     int rowDiff = initial.x() - final.x();
     int colDiff = initial.y() - final.y();
 

@@ -1,10 +1,10 @@
 #include "Knight.hpp"
 #include "ChessBoard.hpp"
 
-Knight::Knight(Color color, QWidget* parent) : Piece(color, parent) {
+chess_model::Knight::Knight(Color color, QWidget* parent) : Piece(color, parent) {
 }
 
-bool Knight::isValidMove(const QPoint& initial, const QPoint & final) const {
+bool chess_model::Knight::isValidMove(const QPoint& initial, const QPoint & final) const {
     int dx = abs(final.x() - initial.x());
     int dy = abs(final.y() - initial.y());
 

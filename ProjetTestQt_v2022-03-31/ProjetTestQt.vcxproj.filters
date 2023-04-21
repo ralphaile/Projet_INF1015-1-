@@ -52,6 +52,12 @@
     <ClCompile Include="Rook.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TempPiece.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CustomExceptions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="ChessBoard.hpp">
@@ -72,5 +78,13 @@
     <QtMoc Include="Knight.hpp">
       <Filter>Header Files</Filter>
     </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TempPiece.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomExceptions.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

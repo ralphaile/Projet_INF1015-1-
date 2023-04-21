@@ -1,19 +1,18 @@
 ﻿#include "King.hpp"
 #include "ChessBoard.hpp"
+#include "CustomExceptions.hpp"
 
-int King::instanceCounter = 0;
+int chess_model::King::instanceCounter = 0;
 
-King::King(Color color, QWidget* parent, bool bypassLimitCheck) : Piece(color, parent)
+chess_model::King::King(Color color, QWidget* parent) : Piece(color, parent)
 {
-    if (!bypassLimitCheck) {
         if (instanceCounter >= 2) {
-            throw std::runtime_error("There can only be two kings");
+            throw TooManyKingsException("There can only be 2 kings on the board.");
         }
         instanceCounter++;
-    }
 }
 
-bool King::isValidMove(const QPoint& initial, const QPoint & final) const {
+bool chess_model::King::isValidMove(const QPoint& initial, const QPoint & final) const {
     int rowDiff = abs(final.y() - initial.y());
     int colDiff = abs(final.x() - initial.x());
 
@@ -24,4 +23,7 @@ bool King::isValidMove(const QPoint& initial, const QPoint & final) const {
 
     // King can move one square in any direction: horizontally, vertically, or diagonally
     return (rowDiff <= 1 && colDiff <= 1);
+}
+void chess_model::King::resetCounter() {
+    instanceCounter = 0;
 }

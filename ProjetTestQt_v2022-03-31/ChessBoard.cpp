@@ -6,11 +6,12 @@
 #include <QPushButton>
 #include <QMessageBox>
 #include <QDebug>
+#include "TempPiece.hpp"
+#include "CustomExceptions.hpp"
 
-using namespace chess_gui;
 
-ChessBoard::ChessBoard(bool isTest,QWidget* parent) : QWidget(parent), layout(new QGridLayout(this)) {
-    turn = Piece::Color::White;
+chess_gui::ChessBoard::ChessBoard(bool isTest,QWidget* parent) : QWidget(parent), layout(new QGridLayout(this)) {
+    turn = chess_model::Piece::Color::White;
     if (isTest)
          initializeBoardForTesting();
     else
@@ -18,7 +19,7 @@ ChessBoard::ChessBoard(bool isTest,QWidget* parent) : QWidget(parent), layout(ne
 
 }
 
-bool ChessBoard::isPathClear(const QPoint& initial, const QPoint & final) const {
+bool chess_gui::ChessBoard::isPathClear(const QPoint& initial, const QPoint & final) const {
     int rowDiff = initial.x() - final.x();
     int colDiff = initial.y() - final.y();
 
@@ -38,7 +39,7 @@ bool ChessBoard::isPathClear(const QPoint& initial, const QPoint & final) const 
             }
         }
     }
-    QSharedPointer<Piece> destinationPiece = getPiece(final.x(), final.y());
+    QSharedPointer<chess_model::Piece> destinationPiece = getPiece(final.x(), final.y());
     if (!destinationPiece.isNull() && destinationPiece->getPieceColor() == pieces[initial.x()][initial.y()]->getPieceColor()) {
         return false;
     }
@@ -46,32 +47,35 @@ bool ChessBoard::isPathClear(const QPoint& initial, const QPoint & final) const 
     return true;
 }
 
+void chess_gui::ChessBoard::setPiece(int row, int col, QSharedPointer<chess_model::Piece> piece) {
+    pieces[row][col] = piece;
+}
 
-QSharedPointer<Piece> ChessBoard::getPiece(int row, int col) const {
+QSharedPointer<chess_model::Piece> chess_gui::ChessBoard::getPiece(int row, int col) const {
     if (row >= 0 && row < 8 && col >= 0 && col < 8) {
         return pieces[row][col];
     }
-    return QSharedPointer<Piece>();
+    return QSharedPointer<chess_model::Piece>();
 }
 
 template<typename PieceType>
-void ChessBoard::createPieceAtPosition(int row, int col, Piece::Color color) {
+void chess_gui::ChessBoard::createPieceAtPosition(int row, int col, chess_model::Piece::Color color) {
     try {
-        QSharedPointer<Piece> piece = QSharedPointer<Piece>(new PieceType(color, this));
+        QSharedPointer<chess_model::Piece> piece = QSharedPointer<chess_model::Piece>(new PieceType(color, this));
         QPushButton* button = boardButtons[row][col];
         QString buttonText =piece->getName();
         button->setText(buttonText);
         pieces[row][col] = piece;
     }
-    catch (const std::runtime_error& e) {
+    catch (const TooManyKingsException& e) {
         QMessageBox::critical(this, "Error", e.what());
     }
 }
 
-void ChessBoard::initializeBoard() {
+void chess_gui::ChessBoard::initializeBoard() {
     for (int row = 0; row < 8; ++row) {
         QVector<QPushButton*> buttonRow;
-        QVector<QSharedPointer<Piece>> pieceRow;
+        QVector<QSharedPointer<chess_model::Piece>> pieceRow;
 
         for (int col = 0; col < 8; ++col) {
             QPushButton* button = new QPushButton(this);
@@ -88,27 +92,26 @@ void ChessBoard::initializeBoard() {
             connect(button, &QPushButton::clicked, this, &ChessBoard::handleButtonClicked);
 
             // Add chess pieces to the board
-            QSharedPointer<Piece> piece;
+            QSharedPointer<chess_model::Piece> piece;
             pieceRow.push_back(piece);
         }
 
         boardButtons.push_back(buttonRow);
         pieces.push_back(pieceRow);
     }
-
     // Create pieces using createPieceAtPosition
-    createPieceAtPosition<King>(0, 4, Piece::White);
-    createPieceAtPosition<King>(7, 4, Piece::Black);
-    createPieceAtPosition<Knight>(0, 5, Piece::White);
-    createPieceAtPosition<Rook>(0, 3, Piece::White);
-    createPieceAtPosition<Knight>(7, 5, Piece::Black);
-    createPieceAtPosition<Rook>(7, 3, Piece::Black);
+    createPieceAtPosition<chess_model::King>(0, 4, chess_model::Piece::White);
+    createPieceAtPosition<chess_model::King>(7, 4, chess_model::Piece::Black);
+    createPieceAtPosition<chess_model::Knight>(0, 5, chess_model::Piece::White);
+    createPieceAtPosition<chess_model::Rook>(0, 3, chess_model::Piece::White);
+    createPieceAtPosition<chess_model::Knight>(7, 5, chess_model::Piece::Black);
+    createPieceAtPosition<chess_model::Rook>(7, 3, chess_model::Piece::Black);
 }
 
-void ChessBoard::initializeBoardForTesting() {
+void chess_gui::ChessBoard::initializeBoardForTesting() {
     for (int row = 0; row < 8; ++row) {
         QVector<QPushButton*> buttonRow;
-        QVector<QSharedPointer<Piece>> pieceRow;
+        QVector<QSharedPointer<chess_model::Piece>> pieceRow;
 
         for (int col = 0; col < 8; ++col) {
             QPushButton* button = new QPushButton(this);
@@ -124,7 +127,7 @@ void ChessBoard::initializeBoardForTesting() {
             layout->addWidget(button, row, col);
             connect(button, &QPushButton::clicked, this, &ChessBoard::handleButtonClicked);
 
-            pieceRow.push_back(QSharedPointer<Piece>());
+            pieceRow.push_back(QSharedPointer<chess_model::Piece>());
         }
 
         boardButtons.push_back(buttonRow);
@@ -132,7 +135,7 @@ void ChessBoard::initializeBoardForTesting() {
     }
 }
 
-void ChessBoard::onButtonClicked(int row, int col) {
+void chess_gui::ChessBoard::onButtonClicked(int row, int col) {
     // Check if a piece is already selected
     if (selectedPiece == QPoint(-1, -1)) {
         // If the clicked position has a piece, select it
@@ -174,12 +177,12 @@ void ChessBoard::onButtonClicked(int row, int col) {
             boardButtons[selectedPiece.x()][selectedPiece.y()]->setStyleSheet(QString("background-color: %1").arg(backgroundColor.name()));
 
             // Check if the move puts the opponent in check
-            Piece::Color opponentColor = pieces[row][col]->getPieceColor() == Piece::Color::White ? Piece::Color::Black : Piece::Color::White;
+            chess_model::Piece::Color opponentColor = pieces[row][col]->getPieceColor() == chess_model::Piece::Color::White ? chess_model::Piece::Color::Black : chess_model::Piece::Color::White;
             if (isInCheckmate(opponentColor)) {
                 //qDebug() << (opponentColor) << "is in checkmate";
                 QMessageBox::information(this, "Checkmate", "Checkmate! The game is over.");
-                for (const auto& row : boardButtons) {
-                    for (auto button : row) {
+                for (const auto& tmpRow : boardButtons) {
+                    for (auto button : tmpRow) {
                         button->setEnabled(false);
                     }
                 }
@@ -189,7 +192,7 @@ void ChessBoard::onButtonClicked(int row, int col) {
                 QMessageBox::information(this, "Check", "Check! Your opponent's king is in check.");
             }
 
-            turn = (turn == Piece::Color::White) ? Piece::Color::Black : Piece::Color::White;
+            turn = (turn == chess_model::Piece::Color::White) ? chess_model::Piece::Color::Black : chess_model::Piece::Color::White;
 
 
             // Deselect the piece
@@ -205,7 +208,7 @@ void ChessBoard::onButtonClicked(int row, int col) {
 }
 
 
-void ChessBoard::handleButtonClicked() {
+void chess_gui::ChessBoard::handleButtonClicked() {
     QPushButton* button = qobject_cast<QPushButton*>(sender());
     if (button) {
         int row = -1;
@@ -227,15 +230,15 @@ void ChessBoard::handleButtonClicked() {
         }
     }
 }
-bool ChessBoard::isInCheck(Piece::Color color) {
+bool chess_gui::ChessBoard::isInCheck(chess_model::Piece::Color color) {
     //qDebug() << "Checking if" << (color == Piece::Color::White ? "White" : "Black") << "is in check";
     QPoint kingPosition;
 
     for (int row = 0; row < 8; ++row) {
         for (int col = 0; col < 8; ++col) {
-            QSharedPointer<Piece> piece = pieces[row][col];
+            QSharedPointer<chess_model::Piece> piece = pieces[row][col];
 
-            if (!piece.isNull() && piece->getPieceColor() == color && dynamic_cast<King*>(piece.data())) {
+            if (!piece.isNull() && piece->getPieceColor() == color && dynamic_cast<chess_model::King*>(piece.data())) {
                 kingPosition = QPoint(row, col);
                 break;
             }
@@ -244,7 +247,7 @@ bool ChessBoard::isInCheck(Piece::Color color) {
     //qDebug() << "King position: " << kingPosition;
     for (int row = 0; row < 8; ++row) {
         for (int col = 0; col < 8; ++col) {
-            QSharedPointer<Piece> piece = pieces[row][col];
+            QSharedPointer<chess_model::Piece> piece = pieces[row][col];
 
             if (!piece.isNull() && piece->getPieceColor() != color && piece->isValidMove(QPoint(row, col), kingPosition)) {
                // qDebug() << "Checking piece at" << QPoint(row, col) << "with type" << typeid(*piece).name() << "for valid move to king";
@@ -256,7 +259,7 @@ bool ChessBoard::isInCheck(Piece::Color color) {
     return false;
 }
 
-bool ChessBoard::isInCheckmate(Piece::Color color) {
+bool chess_gui::ChessBoard::isInCheckmate(chess_model::Piece::Color color) {
     // Check if the king is in check first
     if (!isInCheck(color)) {
         return false;
@@ -286,19 +289,15 @@ bool ChessBoard::isInCheckmate(Piece::Color color) {
 }
 
 
-bool ChessBoard::isMovePuttingKingInCheck(const QPoint& initial, const QPoint & final) {
+bool chess_gui::ChessBoard::isMovePuttingKingInCheck(const QPoint& initial, const QPoint & final) {
     // Temporarily move the piece
-    QSharedPointer<Piece> tempPiece = pieces[final.x()][final.y()];
-    pieces[final.x()][final.y()] = pieces[initial.x()][initial.y()];
-    pieces[initial.x()][initial.y()].reset();
+    TempPiece tempMove(pieces, initial, final);
 
     // Check if the king is in check
-    Piece::Color currentPlayerColor = pieces[final.x()][final.y()]->getPieceColor();
+    chess_model::Piece::Color currentPlayerColor = pieces[final.x()][final.y()]->getPieceColor();
     bool kingInCheck = isInCheck(currentPlayerColor);
 
-    // Undo the temporary move
-    pieces[initial.x()][initial.y()] = pieces[final.x()][final.y()];
-    pieces[final.x()][final.y()] = tempPiece;
+    // The temporary move is automatically undone when tempMove goes out of scope
 
     return kingInCheck;
 }

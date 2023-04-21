@@ -33,7 +33,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\HP\AppData\Local\Temp\k4glm33p.cco;C:\Qt\6.5.0\msvc2019_64\include;C:\Qt\6.5.0\msvc2019_64\include\QtWidgets;C:\Qt\6.5.0\msvc2019_64\include\QtGui;C:\Qt\6.5.0\msvc2019_64\include\QtCore;C:\Users\HP\AppData\Local\Temp\k4glm33p.cco;/include;C:\Qt\6.5.0\msvc2019_64\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\HP\AppData\Local\Temp\hfz14rrp.4tp;C:\Qt\6.5.0\msvc2019_64\include;C:\Qt\6.5.0\msvc2019_64\include\QtWidgets;C:\Qt\6.5.0\msvc2019_64\include\QtGui;C:\Qt\6.5.0\msvc2019_64\include\QtCore;C:\Users\HP\AppData\Local\Temp\hfz14rrp.4tp;/include;C:\Qt\6.5.0\msvc2019_64\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -permissive- -Zc:__cplusplus -Zc:externConstexpr -utf-8 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>.\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>

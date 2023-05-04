@@ -1,4 +1,8 @@
-﻿#include "ChessBoard.hpp"
+﻿/**
+ * @file TestChess.cpp
+ * @brief This file contains the test suite for the ChessBoard class, which tests various functionalities such as piece creation, game state determination, and exceptions.
+ */
+#include "ChessBoard.hpp"
 #include "King.hpp"
 #include "Knight.hpp"
 #include "Rook.hpp"
@@ -9,13 +13,13 @@ TEST(ChessBoardTest, NoMoreThanTwoKings) {
     chess_gui::ChessBoard board(true);
 
     // Add the first king
-    EXPECT_NO_THROW(board.createPieceAtPosition<chess_model::King>(0, 0, chess_model::Piece::Color::White));
+    EXPECT_NO_THROW(board.createPieceAtPosition<chess_model::King>(0, 0, chess_model::Piece::Color::WHITE));
 
     // Add the second king
-    EXPECT_NO_THROW(board.createPieceAtPosition<chess_model::King>(0, 1, chess_model::Piece::Color::Black));
+    EXPECT_NO_THROW(board.createPieceAtPosition<chess_model::King>(0, 1, chess_model::Piece::Color::BLACK));
 
     // Attempt to add a third king
-    EXPECT_THROW(chess_model::King king(chess_model::Piece::Color::White, &board), TooManyKingsException);
+    EXPECT_THROW(chess_model::King king(chess_model::Piece::Color::WHITE, &board), TooManyKingsException);
 
     chess_model::King::resetCounter();
 }
@@ -23,7 +27,7 @@ TEST(ChessBoardTest, NoMoreThanTwoKings) {
 // Test for valid King moves
 TEST(ChessPieceTest, KingMoves) {
     chess_gui::ChessBoard board(true);
-    chess_model::King king(chess_model::Piece::Color::White, &board);
+    chess_model::King king(chess_model::Piece::Color::WHITE, &board);
     QPoint initial(4, 4);
 
     // Test valid moves
@@ -52,7 +56,7 @@ TEST(ChessPieceTest, KingMoves) {
 // Test for valid Rook moves
 TEST(ChessPieceTest, RookMoves) {
     chess_gui::ChessBoard board(true);
-    chess_model::Rook rook(chess_model::Piece::Color::White, &board);
+    chess_model::Rook rook(chess_model::Piece::Color::WHITE, &board);
     QPoint initial(4, 4);
 
     // Test valid moves
@@ -73,7 +77,7 @@ TEST(ChessPieceTest, RookMoves) {
 // Test for valid Knight moves
 TEST(ChessPieceTest, KnightMoves) {
     chess_gui::ChessBoard board(true);
-    chess_model::Knight knight(chess_model::Piece::Color::White, &board);
+    chess_model::Knight knight(chess_model::Piece::Color::WHITE, &board);
     QPoint initial(4, 4);
 
     // Test valid moves
@@ -98,10 +102,10 @@ TEST(ChessBoardTest, IsInCheck) {
     chess_gui::ChessBoard board(true);
 
     // Set up a test board where the black king is in check
-    board.createPieceAtPosition<chess_model::Rook>(3, 0, chess_model::Piece::White);
-    board.createPieceAtPosition<chess_model::King>(3, 7, chess_model::Piece::Black);
+    board.createPieceAtPosition<chess_model::Rook>(3, 0, chess_model::Piece::Color::WHITE);
+    board.createPieceAtPosition<chess_model::King>(3, 7, chess_model::Piece::Color::BLACK);
 
-    EXPECT_TRUE(board.test_isInCheck(chess_model::Piece::Color::Black));
+    EXPECT_TRUE(board.test_isInCheck(chess_model::Piece::Color::BLACK));
     chess_model::King::resetCounter();
 }
 
@@ -109,8 +113,8 @@ TEST(ChessBoardTest, MovePutsKingInCheck) {
     chess_gui::ChessBoard board(true);
 
     // Set up a test board where the white king is not in check
-    board.createPieceAtPosition<chess_model::King>(4, 0, chess_model::Piece::White);
-    board.createPieceAtPosition<chess_model::Rook>(3, 6, chess_model::Piece::Black);
+    board.createPieceAtPosition<chess_model::King>(4, 0, chess_model::Piece::Color::WHITE);
+    board.createPieceAtPosition<chess_model::Rook>(3, 6, chess_model::Piece::Color::BLACK);
 
     // Test if moving the white king puts it in check
     EXPECT_TRUE(board.test_isMovePuttingKingInCheck(QPoint(4, 0), QPoint(3, 0)));
@@ -125,24 +129,47 @@ TEST(ChessBoardTest, Not_Checkmate) {
     chess_gui::ChessBoard board(true);
 
     // Set up a test board where the black king is in check
-    board.createPieceAtPosition<chess_model::Rook>(3, 0, chess_model::Piece::White);
-    board.createPieceAtPosition<chess_model::King>(3, 7, chess_model::Piece::Black);
+    board.createPieceAtPosition<chess_model::Rook>(3, 0, chess_model::Piece::Color::WHITE);
+    board.createPieceAtPosition<chess_model::King>(3, 7, chess_model::Piece::Color::BLACK);
 
-    EXPECT_FALSE(board.test_isInCheckmate(chess_model::Piece::Color::Black));
+    EXPECT_FALSE(board.test_isInCheckmate(chess_model::Piece::Color::BLACK));
     chess_model::King::resetCounter();
 }
 
 //Decomment this section to test checkmate, but it takes a long time if checkmate is true
 
-/*TEST(ChessBoardTest, Checkmate) {
+TEST(ChessBoardTest, Checkmate) {
     chess_gui::ChessBoard board(true);
 
     // Set up a test board where the black king is in checkmate
-    board.createPieceAtPosition<chess_model::Rook>(0, 0, chess_model::Piece::White);
-    board.createPieceAtPosition<chess_model::Rook>(0, 1, chess_model::Piece::White);
-    board.createPieceAtPosition<chess_model::King>(7, 0, chess_model::Piece::Black);
+    board.createPieceAtPosition<chess_model::Rook>(0, 0, chess_model::Piece::Color::WHITE);
+    board.createPieceAtPosition<chess_model::Rook>(0, 1, chess_model::Piece::Color::WHITE);
+    board.createPieceAtPosition<chess_model::King>(7, 0, chess_model::Piece::Color::BLACK);
 
-    EXPECT_TRUE(board.test_isInCheckmate(chess_model::Piece::Color::Black));
+    EXPECT_TRUE(board.test_isInCheckmate(chess_model::Piece::Color::BLACK));
 
     chess_model::King::resetCounter();
-}*/
+}
+
+TEST(ChessBoardTest, StalemateMoves) {
+    chess_gui::ChessBoard board(true);
+    // Set up a test board where the black king is in stalemate
+    board.createPieceAtPosition<chess_model::Rook>(5, 6, chess_model::Piece::Color::WHITE);
+    board.createPieceAtPosition<chess_model::Rook>(6, 6, chess_model::Piece::Color::WHITE);
+    board.createPieceAtPosition<chess_model::King>(7, 7, chess_model::Piece::Color::BLACK);
+
+    EXPECT_TRUE(board.test_isInStalemate(chess_model::Piece::Color::BLACK));
+
+    chess_model::King::resetCounter();
+}
+
+TEST(ChessBoardTest, StalemateKings) {
+    chess_gui::ChessBoard board(true);
+    // Set up a test board with only kings
+    board.createPieceAtPosition<chess_model::King>(7, 7, chess_model::Piece::Color::BLACK);
+    board.createPieceAtPosition<chess_model::King>(7, 0, chess_model::Piece::Color::WHITE);
+
+    EXPECT_TRUE(board.test_isInStalemate(chess_model::Piece::Color::BLACK));
+
+    chess_model::King::resetCounter();
+}

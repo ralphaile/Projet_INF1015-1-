@@ -1,3 +1,8 @@
+/**
+ * @file MainWindow.hpp
+ * @brief This file contains the declaration of the MainWindow class. The MainWindow class is responsible for creating and managing the main application window, which includes the chessboard and other UI components.
+ */
+
 #pragma once
 #include <QMainWindow>
 #include "ChessBoard.hpp"
@@ -11,6 +16,5 @@ public:
 private:
     chess_gui::ChessBoard* chessBoard;
 
-    // Add any other necessary methods and member variables here
 };
 

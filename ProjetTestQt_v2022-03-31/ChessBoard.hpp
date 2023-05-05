@@ -36,6 +36,9 @@ namespace chess_gui {
         bool test_isInStalemate(chess_model::Piece::Color color) {
             return isInStalemate(color);
         }
+        
+        void setupStandardStartPosition();
+        void setupFischerRandomStartPosition();
 
         void initializeBoardForTesting();
         template<typename PieceType>

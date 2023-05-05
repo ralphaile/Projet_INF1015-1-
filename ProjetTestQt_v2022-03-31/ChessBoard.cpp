@@ -357,3 +357,103 @@ bool chess_gui::ChessBoard::isInStalemate(chess_model::Piece::Color color) {
     // If no valid moves are found, it's a stalemate
     return true;
 }
+
+void chess_gui::ChessBoard::setupStandardStartPosition() {
+    clearBoard();
+
+    // pawns
+    for (int col = 0; col < 8; col++) {
+        createPieceAtPosition<chess_model::Pawn>(col, 1, chess_model::Piece::Color::WHITE);
+        createPieceAtPosition<chess_model::Pawn>(col, 6, chess_model::Piece::Color::BLACK);
+    }
+
+    // rooks
+    createPieceAtPosition<chess_model::Rook>(0, 0, chess_model::Piece::Color::WHITE);
+    createPieceAtPosition<chess_model::Rook>(7, 0, chess_model::Piece::Color::WHITE);
+    createPieceAtPosition<chess_model::Rook>(0, 7, chess_model::Piece::Color::BLACK);
+    createPieceAtPosition<chess_model::Rook>(7, 7, chess_model::Piece::Color::BLACK);
+
+    // knights
+    createPieceAtPosition<chess_model::Knight>(1, 0, chess_model::Piece::Color::WHITE);
+    createPieceAtPosition<chess_model::Knight>(6, 0, chess_model::Piece::Color::WHITE);
+    createPieceAtPosition<chess_model::Knight>(1, 7, chess_model::Piece::Color::BLACK);
+    createPieceAtPosition<chess_model::Knight>(6, 7, chess_model::Piece::Color::BLACK);
+
+    // bishops
+    createPieceAtPosition<chess_model::Bishop>(2, 0, chess_model::Piece::Color::WHITE);
+    createPieceAtPosition<chess_model::Bishop>(5, 0, chess_model::Piece::Color::WHITE);
+    createPieceAtPosition<chess_model::Bishop>(2, 7, chess_model::Piece::Color::BLACK);
+    createPieceAtPosition<chess_model::Bishop>(5, 7, chess_model::Piece::Color::BLACK);
+
+    // queens
+    createPieceAtPosition<chess_model::Queen>(3, 0, chess_model::Piece::Color::WHITE);
+    createPieceAtPosition<chess_model::Queen>(3, 7, chess_model::Piece::Color::BLACK);
+
+    // kings
+    createPieceAtPosition<chess_model::King>(4, 0, chess_model::Piece::Color::WHITE);
+    createPieceAtPosition<chess_model::King>(4, 7, chess_model::Piece::Color::BLACK);
+}
+}
+
+void chess_gui::ChessBoard::setupFischerRandomStartPosition() {
+    clearBoard();
+    std::vector<int> piecePositions = { 0, 1, 2, 3, 4, 5, 6, 7 };
+
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(piecePositions.begin(), piecePositions.end(), g);
+
+    // faire que le roi est entre les tours
+    while (piecePositions[0] != 2 && piecePositions[1] != 2) {
+        std::shuffle(piecePositions.begin(), piecePositions.end(), g);
+    }
+
+    // faire que les fous sont sur des couleur differente
+    while ((piecePositions[2] % 2) == (piecePositions[3] % 2)) {
+        std::shuffle(piecePositions.begin() + 2, piecePositions.end(), g);
+    }
+
+    // place le reste
+    for (int i = 0; i < 8; ++i) {
+        switch (piecePositions[i]) {
+        case 0:
+            createPieceAtPosition<chess_model::Rook>(i, 0, chess_model::Piece::Color::WHITE);
+            createPieceAtPosition<chess_model::Rook>(i, 7, chess_model::Piece::Color::BLACK);
+            break;
+        case 1:
+            createPieceAtPosition<chess_model::Rook>(i, 0, chess_model::Piece::Color::WHITE);
+            createPieceAtPosition<chess_model::Rook>(i, 7, chess_model::Piece::Color::BLACK);
+            break;
+        case 2:
+            createPieceAtPosition<chess_model::King>(i, 0, chess_model::Piece::Color::WHITE);
+            createPieceAtPosition<chess_model::King>(i, 7, chess_model::Piece::Color::BLACK);
+            break;
+        case 3:
+            createPieceAtPosition<chess_model::Bishop>(i, 0, chess_model::Piece::Color::WHITE);
+            createPieceAtPosition<chess_model::Bishop>(i, 7, chess_model::Piece::Color::BLACK);
+            break;
+        case 4:
+            createPieceAtPosition<chess_model::Bishop>(i, 0, chess_model::Piece::Color::WHITE);
+            createPieceAtPosition<chess_model::Bishop>(i, 7, chess_model::Piece::Color::BLACK);
+            break;
+        case 5:
+            createPieceAtPosition<chess_model::Queen>(i, 0, chess_model::Piece::Color::WHITE);
+            createPieceAtPosition<chess_model::Queen>(i, 7, chess_model::Piece::Color::BLACK);
+            break;
+        case 6:
+            createPieceAtPosition<chess_model::Knight>(i, 0, chess_model::Piece::Color::WHITE);
+            createPieceAtPosition<chess_model::Knight>(i, 7, chess_model::Piece::Color::BLACK);
+            break;
+        case 7:
+            createPieceAtPosition<chess_model::Knight>(i, 0, chess_model::Piece::Color::WHITE);
+            createPieceAtPosition<chess_model::Knight>(i, 7, chess_model::Piece::Color::BLACK);
+            break;
+        }
+    }
+    for (int i = 0; i < 8; ++i) {
+        createPieceAtPosition<chess_model::Pawn>(i, 1, chess_model::Piece::Color::WHITE);
+        createPieceAtPosition<chess_model::Pawn>(i, 6, chess_model::Piece::Color::BLACK);
+    }
+
+    refreshBoardState();
+}

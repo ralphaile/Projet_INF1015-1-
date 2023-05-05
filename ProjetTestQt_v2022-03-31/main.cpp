@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 	QApplication app(argc, argv);
 	initialiserBibliothequeCours(argc, argv);
 
-	MainWindow mainWindow;
-	mainWindow.show();
+	ChessGame chessGame;
+	chessGame.show();
 	return app.exec();
 }
